@@ -11,10 +11,36 @@ const LOCAL_STORAGE_KEY = 'council-session-data'
 
 const initialMembers = [
   { id: 1, name: 'أحمد داوود', present: false, checkInTimes: [], exitTimes: [], votes: {} },
-  { id: 2, name: 'ماريا سعد', present: false, checkInTimes: [], exitTimes: [], votes: {} },
-  { id: 3, name: 'يوسف محمود', present: false, checkInTimes: [], exitTimes: [], votes: {} },
-  { id: 4, name: 'سلمى فؤاد', present: false, checkInTimes: [], exitTimes: [], votes: {} },
-  { id: 5, name: 'علي محمد الكريم', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 2, name: 'فتاح المجدوب', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 3, name: 'يونس الروكي', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 4, name: 'محمد عسلي', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 5, name: 'محمد حورية', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 6, name: 'مروان هلالي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 7, name: 'حمزة  كريش', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 8, name: 'أحمد مقدمي', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 9, name: 'شيماء مسكي', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 10, name: 'الميلودي الرك', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 11, name: 'حسن البحار', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 12, name: 'أحمد الزربي', present: false, checkInTimes: [], exitTimes: [], votes: {} },
+  { id: 13, name: 'أحمد حوري', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 14, name: 'يوسف جبران', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 15, name: 'حليم عبد الهادي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 16, name: 'سعيد التدلاوي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 17, name: 'منير باهي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 18, name: 'أحمد شهبون', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 19, name: 'نور الدين ولد الغالية', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 20, name: 'محمد ازريزع', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 21, name: 'عمر سطور', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 22, name: 'نادية اجلادو', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 23, name: 'فتيحة كجاوي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 24, name: 'حليمة ابهالة', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 25, name: 'فاطمة الزهراء العريان', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 26, name: 'نزهة حمراء', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 27, name: 'حنان الخال', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 28, name: 'ثورية الرطباوي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 29, name: 'فتيحة جلال', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 30, name: 'بديعة الركي', present: false, checkInTimes: [], exitTimes: [], votes: {} }
+  { id: 31, name: 'محجوبة تاج الدين', present: false, checkInTimes: [], exitTimes: [], votes: {} }
 ]
 
 const initialAgendas = []
