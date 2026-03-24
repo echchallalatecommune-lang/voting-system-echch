@@ -184,7 +184,7 @@ function App() {
   return (
     <div className="min-h-screen bg-slate-50 text-slate-800 py-6 px-3 sm:px-5 lg-px-10">
       <header className="max-w-7xl mx-auto mb-6">
-        <h1 className="text-2xl sm:text-3xl font-bold mb-2">نظام متابعة الحضور والتصويت لمجالس البلدية</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold mb-2">نظام متابعة الحضور والتصويت لجماعة الشلالات</h1>
         <div className="text-xs text-slate-500">{localeStrings.exportHint}</div>
         {sessionName.trim() && (
           <div className="mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700">
