@@ -9,6 +9,14 @@ const AttendancePage = ({ members, onMarkPresent, onMarkAbsent, onMarkLeft, loca
 
   return (
     <div className="space-y-2">
+      <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-md">
+        <button 
+          onClick={() => members.forEach(m => onMarkPresent(m.id))}
+          className="w-full py-2 px-4 btn btn-success font-semibold"
+        >
+          اختر الكل كحاضرين
+        </button>
+      </div>
       {members.map((member) => (
         <div key={member.id} className="grid grid-cols-1 md:grid-cols-5 gap-3 p-4 bg-white rounded-xl border border-slate-200 shadow-md">
           <div className="md:col-span-2">

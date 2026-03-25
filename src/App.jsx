@@ -104,17 +104,21 @@ function App() {
   const [timerSeconds, setTimerSeconds] = useState(saved.timerSeconds ?? 0)
   const [timerRunning, setTimerRunning] = useState(saved.timerRunning ?? false)
   const [sessionName, setSessionName] = useState(saved.sessionName ?? '')
+  const [timerStartTime, setTimerStartTime] = useState(saved.timerStartTime ?? null)
+  const [timerStopTime, setTimerStopTime] = useState(saved.timerStopTime ?? null)
 
   useEffect(() => {
-    const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage }
+    const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload))
-  }, [members, agendas, timerSeconds, timerRunning, sessionName, currentPage])
+  }, [members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime])
 
   useEffect(() => {
-    if (!timerRunning) return
-    const timerId = setInterval(() => setTimerSeconds((prev) => prev + 1), 1000)
+    if (!timerRunning || !timerStartTime) return
+    const timerId = setInterval(() => {
+      setTimerSeconds(Math.floor((Date.now() - timerStartTime) / 1000))
+    }, 1000)
     return () => clearInterval(timerId)
-  }, [timerRunning])
+  }, [timerRunning, timerStartTime])
 
   const markPresent = (memberId) => {
     setMembers((prev) =>
@@ -176,6 +180,8 @@ function App() {
     setCurrentPage('setup')
     setTimerSeconds(0)
     setTimerRunning(false)
+    setTimerStartTime(null)
+    setTimerStopTime(null)
     localStorage.removeItem(LOCAL_STORAGE_KEY)
   }
 
@@ -185,7 +191,7 @@ function App() {
     <div className="min-h-screen bg-slate-50 text-slate-800 py-6 px-3 sm:px-5 lg-px-10">
       <header className="max-w-7xl mx-auto mb-6">
         <h1 className="text-2xl sm:text-3xl font-bold mb-2">نظام متابعة الحضور والتصويت لجماعة الشلالات</h1>
-        <div className="text-xs text-slate-500">{localeStrings.exportHint}</div>
+        {/* <div className="text-xs text-slate-500">{localeStrings.exportHint}</div> */}
         {sessionName.trim() && (
           <div className="mt-3 p-3 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-700">
             <span className="font-semibold">دورة:</span> {sessionName}
@@ -200,9 +206,19 @@ function App() {
 
             <TimerControls
               timerSeconds={timerSeconds}
+              timerStartTime={timerStartTime}
+              timerStopTime={timerStopTime}
               timerRunning={timerRunning}
-              onStart={() => setTimerRunning(true)}
-              onStop={() => setTimerRunning(false)}
+              onStart={() => {
+                setTimerRunning(true)
+                if (!timerStartTime) {
+                  setTimerStartTime(Date.now())
+                }
+              }}
+              onStop={() => {
+                setTimerRunning(false)
+                setTimerStopTime(Date.now())
+              }}
               onReset={resetSession}
               localeStrings={localeStrings}
             />
@@ -234,7 +250,7 @@ function App() {
           <VotingPage members={members} agendas={agendas} onAddAgenda={addAgenda} onVote={vote} localeStrings={localeStrings} />
         )}
 
-        {currentPage === 'summary' && <SummaryPage members={members} agendas={agendas} localeStrings={localeStrings} />}
+        {currentPage === 'summary' && <SummaryPage members={members} agendas={agendas} timerStartTime={timerStartTime} timerStopTime={timerStopTime} localeStrings={localeStrings} />}
       </main>
     </div>
   )
