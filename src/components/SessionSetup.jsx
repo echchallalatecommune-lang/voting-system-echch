@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onContinue, localeStrings }) => {
+const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onContinue, importData, localeStrings }) => {
   const [newAgenda, setNewAgenda] = useState('')
 
   const addAgenda = () => {
@@ -56,13 +56,26 @@ const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onCont
           </ul>
         </div>
 
-        <button
-          onClick={onContinue}
-          disabled={!sessionName.trim() || agendas.length === 0}
-          className="w-full btn btn-success"
-        >
-          {localeStrings.startSession}
-        </button>
+        <div className="flex gap-2 flex-col sm:flex-row">
+          <button
+            onClick={onContinue}
+            disabled={!sessionName.trim() || agendas.length === 0}
+            className="flex-1 btn btn-success"
+          >
+            {localeStrings.startSession}
+          </button>
+          <button
+            onClick={() => {
+              const jsonString = prompt(localeStrings.importJsonPlaceholder)
+              if (jsonString) {
+                importData(jsonString)
+              }
+            }}
+            className="flex-1 btn btn-secondary"
+          >
+            {localeStrings.importJson}
+          </button>
+        </div>
       </div>
     </div>
   )

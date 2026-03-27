@@ -300,6 +300,7 @@ function App() {
             agendas={agendas}
             setAgendas={setAgendas}
             onContinue={() => setCurrentPage('attendance')}
+            importData={importData}
             localeStrings={localeStrings}
           />
         )}
