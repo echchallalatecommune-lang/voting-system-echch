@@ -80,6 +80,12 @@ const locales = {
     agendaTitle: 'جدول الأعمال',
     remove: 'إزالة',
     startSession: 'ابدأ الجلسة',
+    exportJson: 'تصدير JSON',
+    importJson: 'استيراد JSON',
+    importJsonPlaceholder: 'ألصق البيانات JSON هنا',
+    importSuccess: 'تم الاستيراد بنجاح',
+    importError: 'خطأ في البيانات JSON',
+    copySuccess: 'تم نسخ البيانات إلى الحافظة',
   },
 }
 
@@ -106,6 +112,8 @@ function App() {
   const [sessionName, setSessionName] = useState(saved.sessionName ?? '')
   const [timerStartTime, setTimerStartTime] = useState(saved.timerStartTime ?? null)
   const [timerStopTime, setTimerStopTime] = useState(saved.timerStopTime ?? null)
+  const [showExportModal, setShowExportModal] = useState(false)
+  const [exportDataText, setExportDataText] = useState('')
 
   useEffect(() => {
     const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime }
@@ -173,6 +181,49 @@ function App() {
     )
   }
 
+  const exportData = () => {
+    const data = {
+      members,
+      agendas,
+      timerSeconds,
+      timerRunning,
+      sessionName,
+      currentPage,
+      timerStartTime,
+      timerStopTime,
+      exportedAt: Date.now()
+    }
+    const jsonString = JSON.stringify(data, null, 2)
+    setExportDataText(jsonString)
+    setShowExportModal(true)
+  }
+
+  const importData = (jsonString) => {
+    try {
+      const data = JSON.parse(jsonString)
+      
+      // Validate required fields
+      if (!data.members || !Array.isArray(data.members)) {
+        throw new Error('Invalid members data')
+      }
+      
+      // Update state
+      setMembers(data.members || initialMembers)
+      setAgendas(data.agendas || initialAgendas)
+      setTimerSeconds(data.timerSeconds || 0)
+      setTimerRunning(data.timerRunning || false)
+      setSessionName(data.sessionName || '')
+      setCurrentPage(data.currentPage || 'setup')
+      setTimerStartTime(data.timerStartTime || null)
+      setTimerStopTime(data.timerStopTime || null)
+      
+      alert(localeStrings.importSuccess)
+    } catch (error) {
+      console.error('Import error:', error)
+      alert(localeStrings.importError)
+    }
+  }
+
   const resetSession = () => {
     setMembers(initialMembers)
     setAgendas(initialAgendas)
@@ -203,6 +254,23 @@ function App() {
         {currentPage !== 'setup' && (
           <>
             <Navigation currentPage={currentPage} onNavigate={setCurrentPage} localeStrings={localeStrings} />
+
+            <div className="flex flex-wrap gap-2 justify-center sm:justify-end">
+              <button onClick={exportData} className="btn btn-primary">
+                {localeStrings.exportJson}
+              </button>
+              <button 
+                onClick={() => {
+                  const jsonString = prompt(localeStrings.importJsonPlaceholder)
+                  if (jsonString) {
+                    importData(jsonString)
+                  }
+                }} 
+                className="btn btn-secondary"
+              >
+                {localeStrings.importJson}
+              </button>
+            </div>
 
             <TimerControls
               timerSeconds={timerSeconds}
@@ -252,6 +320,40 @@ function App() {
 
         {currentPage === 'summary' && <SummaryPage members={members} agendas={agendas} timerStartTime={timerStartTime} timerStopTime={timerStopTime} localeStrings={localeStrings} />}
       </main>
+
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">تصدير البيانات JSON</h3>
+            <textarea
+              value={exportDataText}
+              readOnly
+              className="w-full h-64 p-3 border border-slate-300 rounded font-mono text-sm"
+              placeholder="البيانات JSON ستظهر هنا..."
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(exportDataText).then(() => {
+                    alert('تم نسخ البيانات إلى الحافظة!')
+                  }).catch(() => {
+                    alert('يرجى نسخ البيانات يدوياً (Ctrl+A ثم Ctrl+C)')
+                  })
+                }}
+                className="btn btn-primary"
+              >
+                نسخ إلى الحافظة
+              </button>
+              <button
+                onClick={() => setShowExportModal(false)}
+                className="btn btn-secondary"
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
