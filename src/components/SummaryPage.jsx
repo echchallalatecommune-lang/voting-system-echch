@@ -26,12 +26,12 @@ const SummaryPage = ({ members, agendas, timerStartTime, timerStopTime, localeSt
   })
 
   const agendaResults = agendas.map((agenda) => {
-    const counts = { yes: 0, no: 0, abstain: 0 }
+    const voters = { yes: [], no: [], abstain: [] }
     members.forEach((m) => {
       const vote = m.votes?.[agenda.id]
-      if (vote) counts[vote] += 1
+      if (vote) voters[vote].push(m.name)
     })
-    return { ...agenda, counts }
+    return { ...agenda, voters }
   })
 
   return (
@@ -78,10 +78,16 @@ const SummaryPage = ({ members, agendas, timerStartTime, timerStopTime, localeSt
         {agendaResults.map((agenda) => (
           <div key={agenda.id} className="p-4 rounded-lg border border-slate-200 bg-white shadow-sm">
             <h4 className="font-semibold mb-2">{agenda.title}</h4>
-            <div className="grid grid-cols-3 gap-2 text-sm text-slate-700">
-              <div className="text-emerald-700">{localeStrings.yes}: {agenda.counts.yes}</div>
-              <div className="text-rose-700">{localeStrings.no}: {agenda.counts.no}</div>
-              <div className="text-slate-700">{localeStrings.abstain}: {agenda.counts.abstain}</div>
+            <div className="space-y-2 text-sm">
+              <div className="text-emerald-700">
+                <strong>{localeStrings.yes} ({agenda.voters.yes.length}):</strong> {agenda.voters.yes.length > 0 ? agenda.voters.yes.join(', ') : 'None'}
+              </div>
+              <div className="text-rose-700">
+                <strong>{localeStrings.no} ({agenda.voters.no.length}):</strong> {agenda.voters.no.length > 0 ? agenda.voters.no.join(', ') : 'None'}
+              </div>
+              <div className="text-slate-700">
+                <strong>{localeStrings.abstain} ({agenda.voters.abstain.length}):</strong> {agenda.voters.abstain.length > 0 ? agenda.voters.abstain.join(', ') : 'None'}
+              </div>
             </div>
           </div>
         ))}
