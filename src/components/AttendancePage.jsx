@@ -2,7 +2,7 @@ import React from 'react'
 
 const formatDateTime = (timestamp) => new Date(timestamp).toLocaleString()
 
-const AttendancePage = ({ members, onMarkPresent, onMarkAbsent, onMarkLeft, localeStrings }) => {
+const AttendancePage = ({ members, onMarkPresent, onMarkAbsent, onMarkLeft, onTakeWord, localeStrings }) => {
   if (members.length === 0) {
     return <p className="text-center py-4">{localeStrings.noMembers}</p>
   }
@@ -48,6 +48,9 @@ const AttendancePage = ({ members, onMarkPresent, onMarkAbsent, onMarkLeft, loca
             </button>
             <button onClick={() => onMarkAbsent(member.id)} className="px-3 py-2 btn btn-secondary shadow-sm">
               {localeStrings.absent}
+            </button>
+            <button onClick={() => onTakeWord(member.id)} className="px-3 py-2 btn btn-warning shadow-sm">
+              {localeStrings.tookWord}
             </button>
             <button onClick={() => onMarkLeft(member.id)} className="px-3 py-2 btn btn-danger shadow-sm">
               {localeStrings.leftRoom}

@@ -9,7 +9,7 @@ const formatDateTime = (timestamp) => {
   return `${hours}:${minutes}:${seconds}`
 }
 
-const SummaryPage = ({ members, agendas, timerStartTime, timerStopTime, localeStrings }) => {
+const SummaryPage = ({ members, agendas, events, timerStartTime, timerStopTime, localeStrings }) => {
   const presentCount = members.filter((m) => m.present).length
   const absentCount = members.length - presentCount
   
@@ -33,6 +33,13 @@ const SummaryPage = ({ members, agendas, timerStartTime, timerStopTime, localeSt
     })
     return { ...agenda, voters }
   })
+
+  const sortedEvents = [...events].sort((a, b) => a.timestamp - b.timestamp)
+  const getEventText = (event) => {
+    if (event.type === 'joined') return `${event.memberName} ${localeStrings.joinedMeeting}`
+    if (event.type === 'left') return `${event.memberName} ${localeStrings.leftMeeting}`
+    return `${event.memberName} ${localeStrings.tookWord}`
+  }
 
   return (
     <div className="space-y-4">
@@ -71,6 +78,22 @@ const SummaryPage = ({ members, agendas, timerStartTime, timerStopTime, localeSt
           <p>{localeStrings.noOneLeft}</p>
         ) : (
           <ul className="list-disc pl-5">{leftMembers.map((m) => <li key={m.id}>{m.name}</li>)}</ul>
+        )}
+      </div>
+
+      <div className="p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+        <h3 className="font-semibold mb-2">{localeStrings.eventReport}</h3>
+        {sortedEvents.length === 0 ? (
+          <p>{localeStrings.noEvents}</p>
+        ) : (
+          <div className="space-y-2 text-sm">
+            {sortedEvents.map((event) => (
+              <div key={event.id} className="rounded-md bg-slate-50 p-3 border border-slate-200">
+                <div className="font-medium">{getEventText(event)}</div>
+                <div className="text-slate-500 text-xs">{formatDateTime(event.timestamp)}</div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

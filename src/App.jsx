@@ -57,6 +57,11 @@ const locales = {
     checkIn: 'وقت الحضور',
     exit: 'وقت المغادرة',
     noMembers: 'لا يوجد أعضاء بعد',
+    tookWord: 'أخذ الكلمة',
+    eventReport: 'سجل الأحداث',
+    noEvents: 'لا توجد أحداث بعد',
+    joinedMeeting: 'انضم إلى الاجتماع',
+    leftMeeting: 'غادر الاجتماع',
     addAgenda: 'أضف نقطة جدول',
     addAgendaPlaceholder: 'اكتب نقطة جدول جديدة',
     noAgenda: 'لا توجد نقاط جدول بعد',
@@ -112,13 +117,14 @@ function App() {
   const [sessionName, setSessionName] = useState(saved.sessionName ?? '')
   const [timerStartTime, setTimerStartTime] = useState(saved.timerStartTime ?? null)
   const [timerStopTime, setTimerStopTime] = useState(saved.timerStopTime ?? null)
+  const [events, setEvents] = useState(saved.events ?? [])
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportDataText, setExportDataText] = useState('')
 
   useEffect(() => {
-    const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime }
+    const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime, events }
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(payload))
-  }, [members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime])
+  }, [members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime, events])
 
   useEffect(() => {
     if (!timerRunning || !timerStartTime) return
@@ -128,7 +134,22 @@ function App() {
     return () => clearInterval(timerId)
   }, [timerRunning, timerStartTime])
 
+  const addEvent = (member, type) => {
+    if (!member) return
+    setEvents((prev) => [
+      ...prev,
+      {
+        id: Date.now() + Math.random(),
+        memberId: member.id,
+        memberName: member.name,
+        type,
+        timestamp: Date.now(),
+      },
+    ])
+  }
+
   const markPresent = (memberId) => {
+    const member = members.find((m) => m.id === memberId)
     setMembers((prev) =>
       prev.map((m) =>
         m.id === memberId
@@ -140,6 +161,10 @@ function App() {
           : m,
       ),
     )
+
+    if (member && !member.present) {
+      addEvent(member, 'joined')
+    }
   }
 
   const markAbsent = (memberId) => {
@@ -147,6 +172,7 @@ function App() {
   }
 
   const markLeft = (memberId) => {
+    const member = members.find((m) => m.id === memberId)
     setMembers((prev) =>
       prev.map((m) =>
         m.id === memberId
@@ -158,6 +184,16 @@ function App() {
           : m,
       ),
     )
+
+    if (member && member.present) {
+      addEvent(member, 'left')
+    }
+  }
+
+  const takeWord = (memberId) => {
+    const member = members.find((m) => m.id === memberId)
+    if (!member || !member.present) return
+    addEvent(member, 'tookWord')
   }
 
   const addAgenda = (title) => {
@@ -191,6 +227,7 @@ function App() {
       currentPage,
       timerStartTime,
       timerStopTime,
+      events,
       exportedAt: Date.now()
     }
     const jsonString = JSON.stringify(data, null, 2)
@@ -216,6 +253,7 @@ function App() {
       setCurrentPage(data.currentPage || 'setup')
       setTimerStartTime(data.timerStartTime || null)
       setTimerStopTime(data.timerStopTime || null)
+      setEvents(data.events || [])
       
       alert(localeStrings.importSuccess)
     } catch (error) {
@@ -311,6 +349,7 @@ function App() {
             onMarkPresent={markPresent}
             onMarkAbsent={markAbsent}
             onMarkLeft={markLeft}
+            onTakeWord={takeWord}
             localeStrings={localeStrings}
           />
         )}
@@ -319,7 +358,7 @@ function App() {
           <VotingPage members={members} agendas={agendas} onAddAgenda={addAgenda} onVote={vote} localeStrings={localeStrings} />
         )}
 
-        {currentPage === 'summary' && <SummaryPage members={members} agendas={agendas} timerStartTime={timerStartTime} timerStopTime={timerStopTime} localeStrings={localeStrings} />}
+        {currentPage === 'summary' && <SummaryPage members={members} agendas={agendas} events={events} timerStartTime={timerStartTime} timerStopTime={timerStopTime} localeStrings={localeStrings} />}
       </main>
 
       {showExportModal && (
