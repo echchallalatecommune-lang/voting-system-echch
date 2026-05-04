@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onContinue, importData, localeStrings }) => {
+const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onContinue, openImportModal, localeStrings }) => {
   const [newAgenda, setNewAgenda] = useState('')
 
   const addAgenda = () => {
@@ -64,15 +64,7 @@ const SessionSetup = ({ sessionName, setSessionName, agendas, setAgendas, onCont
           >
             {localeStrings.startSession}
           </button>
-          <button
-            onClick={() => {
-              const jsonString = prompt(localeStrings.importJsonPlaceholder)
-              if (jsonString) {
-                importData(jsonString)
-              }
-            }}
-            className="flex-1 btn btn-secondary"
-          >
+          <button onClick={openImportModal} className="flex-1 btn btn-secondary">
             {localeStrings.importJson}
           </button>
         </div>

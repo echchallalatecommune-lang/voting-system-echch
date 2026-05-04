@@ -120,6 +120,8 @@ function App() {
   const [events, setEvents] = useState(saved.events ?? [])
   const [showExportModal, setShowExportModal] = useState(false)
   const [exportDataText, setExportDataText] = useState('')
+  const [showImportModal, setShowImportModal] = useState(false)
+  const [importDataText, setImportDataText] = useState('')
 
   useEffect(() => {
     const payload = { members, agendas, timerSeconds, timerRunning, sessionName, currentPage, timerStartTime, timerStopTime, events }
@@ -235,6 +237,11 @@ function App() {
     setShowExportModal(true)
   }
 
+  const openImportModal = () => {
+    setImportDataText('')
+    setShowImportModal(true)
+  }
+
   const importData = (jsonString) => {
     try {
       const data = JSON.parse(jsonString)
@@ -256,9 +263,11 @@ function App() {
       setEvents(data.events || [])
       
       alert(localeStrings.importSuccess)
+      return true
     } catch (error) {
       console.error('Import error:', error)
       alert(localeStrings.importError)
+      return false
     }
   }
 
@@ -297,15 +306,7 @@ function App() {
               <button onClick={exportData} className="btn btn-primary">
                 {localeStrings.exportJson}
               </button>
-              <button 
-                onClick={() => {
-                  const jsonString = prompt(localeStrings.importJsonPlaceholder)
-                  if (jsonString) {
-                    importData(jsonString)
-                  }
-                }} 
-                className="btn btn-secondary"
-              >
+              <button onClick={openImportModal} className="btn btn-secondary">
                 {localeStrings.importJson}
               </button>
             </div>
@@ -338,7 +339,7 @@ function App() {
             agendas={agendas}
             setAgendas={setAgendas}
             onContinue={() => setCurrentPage('attendance')}
-            importData={importData}
+            openImportModal={openImportModal}
             localeStrings={localeStrings}
           />
         )}
@@ -386,6 +387,37 @@ function App() {
               </button>
               <button
                 onClick={() => setShowExportModal(false)}
+                className="btn btn-secondary"
+              >
+                إغلاق
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+          <div className="bg-white rounded-lg p-6 max-w-2xl w-full max-h-[80vh] overflow-y-auto">
+            <h3 className="text-lg font-semibold mb-4">استيراد البيانات JSON</h3>
+            <textarea
+              value={importDataText}
+              onChange={(e) => setImportDataText(e.target.value)}
+              className="w-full h-64 p-3 border border-slate-300 rounded font-mono text-sm"
+              placeholder={localeStrings.importJsonPlaceholder}
+            />
+            <div className="flex gap-3 mt-4 flex-col sm:flex-row">
+              <button
+                onClick={() => {
+                  if (importData(importDataText)) {
+                    setShowImportModal(false)
+                  }
+                }}
+                className="btn btn-primary"
+              >
+                {localeStrings.importJson}
+              </button>
+              <button
+                onClick={() => setShowImportModal(false)}
                 className="btn btn-secondary"
               >
                 إغلاق
